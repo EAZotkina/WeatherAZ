@@ -27,8 +27,11 @@ class MainViewModel(private val repository: Repository = RepositoryImpl()) :
             sleep(3000)
             liveDataToObserve.postValue(
                 AppState.Success(
-                    if (isRussia) repository.getWeatherFromLocalStorageRus()
-                    else repository.getWeatherFromLocalStorageWorld()
+                    if (isRussia){
+                       repository.getWeatherFromLocalStorageRus()
+                    } else {
+                        repository.getWeatherFromLocalStorageWorld()
+                    }
                 )
             )
         }.start()

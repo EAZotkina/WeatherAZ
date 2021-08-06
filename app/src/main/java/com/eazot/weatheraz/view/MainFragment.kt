@@ -13,6 +13,7 @@ import com.eazot.weatheraz.R
 import com.eazot.weatheraz.databinding.MainFragmentBinding
 import com.eazot.weatheraz.viewmodel.AppState
 import com.eazot.weatheraz.model.data.Weather
+import kotlin.properties.Delegates.notNull
 
 
 class MainFragment : Fragment() {
@@ -21,7 +22,9 @@ class MainFragment : Fragment() {
         fun newInstance() = MainFragment()
     }
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
+    }
     private var _binding: MainFragmentBinding? = null
     private val binding
         get() = _binding!!
@@ -36,31 +39,18 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        adapter.removeOnItemViewClickListener()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter.setOnItemViewClickListener(object: OnItemViewClickListener {
-            override fun onItemViewClick(weather: Weather) {
-                val manager = activity?.supportFragmentManager
-                if (manager != null) {
-                    val bundle = Bundle()
-                    bundle.putParcelable(DetailsFragment.BUNDLE_EXTRA, weather)
-                    manager.beginTransaction()
-                        .add(R.id.container, DetailsFragment.newInstance(bundle))
-                        .addToBackStack("")
-                        .commitAllowingStateLoss()
-                }
+        adapter.setOnItemViewClickListener { weather ->
+            activity?.supportFragmentManager?.apply {
+                beginTransaction()
+                    .add(R.id.container, DetailsFragment.newInstance(Bundle().apply {
+                        putParcelable(DetailsFragment.BUNDLE_EXTRA, weather)
+                    }))
+                    .addToBackStack("")
+                    .commitAllowingStateLoss()
             }
-        })
+        }
+
 
         binding.mainFragmentRecyclerView.adapter = adapter
         binding.mainFragmentFAB.setOnClickListener {
@@ -81,7 +71,7 @@ class MainFragment : Fragment() {
             viewModel.getWeatherFromLocalSourceWorld()
             binding.mainFragmentFAB.setImageResource(R.drawable.ic_russia)
         }
-        isDataSetRus = !isDataSetRus
+            isDataSetRus = !isDataSetRus
     }
 
     private fun renderData(data: AppState) {
@@ -96,7 +86,7 @@ class MainFragment : Fragment() {
             }
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                Snackbar.make(binding.mainFragmentFAB, "Error", Snackbar.LENGTH_INDEFINITE)
+                Snackbar.make(binding.mainFragmentFAB, "@string/error", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Reload") {
                         if (isDataSetRus) viewModel.getWeatherFromLocalSourceRus()
                         else viewModel.getWeatherFromLocalSourceWorld()
@@ -104,9 +94,5 @@ class MainFragment : Fragment() {
                     .show()
             }
         }
-    }
-
-    interface OnItemViewClickListener {
-        fun onItemViewClick(weather: Weather)
     }
 }
