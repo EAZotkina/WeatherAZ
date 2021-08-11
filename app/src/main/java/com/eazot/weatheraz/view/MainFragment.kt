@@ -8,12 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.snackbar.Snackbar
 import com.eazot.weatheraz.R
 import com.eazot.weatheraz.databinding.MainFragmentBinding
 import com.eazot.weatheraz.viewmodel.AppState
-import com.eazot.weatheraz.model.data.Weather
-import kotlin.properties.Delegates.notNull
 
 
 class MainFragment : Fragment() {

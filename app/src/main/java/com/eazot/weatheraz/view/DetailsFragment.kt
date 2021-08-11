@@ -1,18 +1,23 @@
 package com.eazot.weatheraz.view
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import com.eazot.weatheraz.model.data.Weather
 import com.eazot.weatheraz.R
 import com.eazot.weatheraz.databinding.DetailsFragmentBinding
+import com.eazot.weatheraz.model.data.Weather
+import com.eazot.weatheraz.model.dto.WeatherDTO
+
 
 class DetailsFragment : Fragment() {
 
     private var _binding: DetailsFragmentBinding? = null
     private val binding get() = _binding!!
+    private lateinit var weatherBundle: Weather
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,16 +28,31 @@ class DetailsFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.getParcelable<Weather>(BUNDLE_EXTRA)?.let{ weather ->
-            populateData(weather)
+        weatherBundle = arguments?.getParcelable<Weather>(BUNDLE_EXTRA) ?: Weather()
+        binding.main.hide()
+        binding.loadingLayout.show()
+        val loader = WeatherLoader(onLoadListener, weatherBundle.city.lat, weatherBundle.city.lon)
+        loader.loadWeather()
+    }
+
+    private val onLoadListener = object: WeatherLoader.WeatherLoaderListener {
+        override fun onLoaded(weatherDTO: WeatherDTO) {
+            displayWeather(weatherDTO)
+        }
+
+        override fun onFailed(throwable: Throwable) {
+            // Обработка ошибок
         }
     }
 
-    private fun populateData(weatherData: Weather) {
+    private fun displayWeather(weatherDTO: WeatherDTO) {
         with(binding) {
-            weatherData.city.also{ city ->
+            main.show()
+            loadingLayout.hide()
+            weatherBundle.city.also{ city ->
                 cityName.text = city.city
                 cityCoordinates.text = String.format(
                     getString(R.string.city_coordinates),
@@ -41,9 +61,10 @@ class DetailsFragment : Fragment() {
                 )
             }
 
-            weatherData.apply {
-                temperatureValue.text = temperature.toString()
-                feelsLikeValue.text = feelsLike.toString()
+            weatherDTO.fact?.let { fact ->
+                temperatureValue.text = fact.temp.toString()
+                feelsLikeValue.text = fact.feels_like.toString()
+                weatherCondition.text = fact.condition
             }
         }
     }
