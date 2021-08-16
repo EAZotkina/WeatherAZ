@@ -12,7 +12,7 @@ class MainFragmentAdapter :
     private var weatherData: List<Weather> = listOf()
     private var onItemViewClickListener: (Weather) -> Unit = {}
 
-    fun setOnItemViewClickListener(onItemViewClickListener: (Weather) -> Unit){
+    fun setOnItemViewClickListener(onItemViewClickListener: (Weather) -> Unit) {
         this.onItemViewClickListener = onItemViewClickListener
     }
 
@@ -43,12 +43,12 @@ class MainFragmentAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(weather: Weather) {
-                binding.apply {
-                    mainFragmentRecyclerItemTextView.text = weather.city.city
-                    root.setOnClickListener {
-                        onItemViewClickListener(weather)
-                    }
+            binding.apply {
+                mainFragmentRecyclerItemTextView.text = weather.city.city
+                root.setOnClickListener {
+                    onItemViewClickListener(weather)
                 }
+            }
         }
     }
 }
