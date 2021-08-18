@@ -1,4 +1,4 @@
-package com.eazot.weatheraz.viewmodel
+package com.eazot.weatheraz.model
 
 import com.eazot.weatheraz.model.data.Weather
 
