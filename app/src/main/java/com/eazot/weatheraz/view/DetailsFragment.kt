@@ -10,11 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.eazot.weatheraz.R
 import com.eazot.weatheraz.databinding.DetailsFragmentBinding
-import com.eazot.weatheraz.model.data.Weather
 import com.eazot.weatheraz.model.AppState
+import com.eazot.weatheraz.model.data.City
+import com.eazot.weatheraz.model.data.Weather
 import com.eazot.weatheraz.viewmodel.DetailsViewModel
 import com.squareup.picasso.Picasso
-import okhttp3.*
 
 private const val TEMP_INVALID = -100
 private const val FEELS_LIKE_INVALID = -100
@@ -68,7 +68,10 @@ class DetailsFragment : Fragment() {
                 binding.main.show()
                 binding.loadingLayout.hide()
                 binding.main.showSnackBar(getString(R.string.error), getString(R.string.reload)) {
-                    viewModel.getWeatherFromRemoteSource(weatherBundle.city.lat, weatherBundle.city.lon)
+                    viewModel.getWeatherFromRemoteSource(
+                        weatherBundle.city.lat,
+                        weatherBundle.city.lon
+                    )
                 }
             }
         }
@@ -83,6 +86,7 @@ class DetailsFragment : Fragment() {
                     city.lat.toString(),
                     city.lon.toString()
                 )
+                saveCity(city, weather)
             }
             weather.let {
                 temperatureValue.text = it.temperature.toString()
@@ -94,6 +98,20 @@ class DetailsFragment : Fragment() {
                 .load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
                 .into(headerIcon)
         }
+    }
+
+    private fun saveCity(
+        city: City,
+        weather: Weather
+    ) {
+        viewModel.saveCityToDB(
+            Weather(
+                city,
+                weather.temperature,
+                weather.feelsLike,
+                weather.condition
+            )
+        )
     }
 
     companion object {

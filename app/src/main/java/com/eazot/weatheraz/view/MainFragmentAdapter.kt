@@ -12,10 +12,9 @@ class MainFragmentAdapter :
     private var weatherData: List<Weather> = listOf()
     private var onItemViewClickListener: (Weather) -> Unit = {}
 
-    fun setOnItemViewClickListener(onItemViewClickListener: (Weather) -> Unit) {
+    fun setOnItemViewClickListener(onItemViewClickListener: (Weather) -> Unit){
         this.onItemViewClickListener = onItemViewClickListener
     }
-
 
     fun setWeather(data: List<Weather>) {
         weatherData = data

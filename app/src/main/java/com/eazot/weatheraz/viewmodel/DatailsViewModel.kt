@@ -3,16 +3,16 @@ package com.eazot.weatheraz.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.eazot.weatheraz.app.App.Companion.getHistoryDao
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.eazot.weatheraz.model.AppState
+import com.eazot.weatheraz.model.data.Weather
 import com.eazot.weatheraz.model.data.convertDtoToModel
 import com.eazot.weatheraz.model.dto.FactDTO
 import com.eazot.weatheraz.model.dto.WeatherDTO
-import com.eazot.weatheraz.model.repository.DetailsRepository
-import com.eazot.weatheraz.model.repository.DetailsRepositoryImpl
-import com.eazot.weatheraz.model.repository.RemoteDataSource
+import com.eazot.weatheraz.model.repository.*
 import java.io.IOException
 
 private const val SERVER_ERROR = "Ошибка сервера"
@@ -21,12 +21,17 @@ private const val CORRUPTED_DATA = "Неполные данные"
 
 class DetailsViewModel(
     val detailsLiveData: MutableLiveData<AppState> = MutableLiveData(),
-    private val detailsRepository: DetailsRepository = DetailsRepositoryImpl(RemoteDataSource())
+    private val detailsRepository: DetailsRepository = DetailsRepositoryImpl(RemoteDataSource()),
+    private val historyRepository: LocalRepository = LocalRepositoryImpl(getHistoryDao())
 ) : ViewModel() {
 
     fun getWeatherFromRemoteSource(lat: Double, lon: Double) {
         detailsLiveData.value = AppState.Loading
         detailsRepository.getWeatherDetailsFromServer(lat, lon, callBack)
+    }
+
+    fun saveCityToDB(weather: Weather) {
+        historyRepository.saveEntity(weather)
     }
 
     private val callBack = object : Callback<WeatherDTO> {
