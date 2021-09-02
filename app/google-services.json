@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1080164934049",
+    "project_id": "weatheraz-78637",
+    "storage_bucket": "weatheraz-78637.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080164934049:android:a511938b1404bd830f2be0",
+        "android_client_info": {
+          "package_name": "com.eazot.weatheraz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1080164934049-q7uanub6pg1dc5idc55v34d41pfofh8j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4kBQXLjTtN5LRFJrRaDWCDbJ50nLnvr8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1080164934049-q7uanub6pg1dc5idc55v34d41pfofh8j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
